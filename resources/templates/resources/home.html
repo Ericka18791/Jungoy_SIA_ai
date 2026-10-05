@@ -1,0 +1,124 @@
+{% extends 'resources/base.html' %}
+
+{% block title %}STUDYHUB | Your study library{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-copy">
+        <p class="eyebrow">Cute Cozy Digital Study Planner</p>
+        <h1>A little more room<br>to <em>learn well.</em></h1>
+        <p class="hero-description">Your organized space for discovering, managing, and revisiting the materials that make studying feel simpler.</p>
+        <div class="actions">
+            <a class="button primary" href="{% url 'resource_list' %}">Browse resources <span aria-hidden="true">→</span></a>
+            <a class="button secondary" href="{% url 'resource_create' %}">Add a resource</a>
+        </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+        <div class="art-sun"></div>
+        <div class="art-book book-one"></div>
+        <div class="art-book book-two"></div>
+        <div class="art-notebook">
+            <span class="notebook-line"></span>
+            <span class="notebook-line"></span>
+            <span class="notebook-line"></span>
+            <span class="notebook-mark">✦</span>
+        </div>
+        <span class="art-spark spark-one">✳</span>
+        <span class="art-spark spark-two">✦</span>
+        <span class="art-caption">Make space for good ideas</span>
+    </div>
+</section>
+
+<section class="stats-grid" aria-label="Study library statistics">
+    <article class="stat-card">
+        <span class="stat-index">01</span>
+        <span class="stat-label">Total resources</span>
+        <strong>{{ total_resources }}</strong>
+        <span class="stat-note">in your library</span>
+    </article>
+    <article class="stat-card">
+        <span class="stat-index">02</span>
+        <span class="stat-label">Subjects</span>
+        <strong>{{ total_subjects }}</strong>
+        <span class="stat-note">areas of study</span>
+    </article>
+    <article class="stat-card">
+        <span class="stat-index">03</span>
+        <span class="stat-label">Reviewers</span>
+        <strong>{{ total_reviewers }}</strong>
+        <span class="stat-note">reviewer resources</span>
+    </article>
+</section>
+
+<section class="content-section">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">Your learning, in chapters</p>
+            <h2>Browse by subject</h2>
+        </div>
+        {% if subject_list %}
+            <span class="section-count">{{ subject_list|length }} subject{{ subject_list|length|pluralize }}</span>
+        {% endif %}
+    </div>
+    {% if subject_list %}
+        <div class="subject-list">
+            {% for subject in subject_list %}
+                <a class="subject-card" href="{% url 'subject_detail' subject_name=subject %}">
+                    <span class="subject-icon" aria-hidden="true">✳</span>
+                    <span>{{ subject }}</span>
+                    <span class="subject-arrow" aria-hidden="true">↗</span>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state empty-state-inline">
+            <span class="empty-icon" aria-hidden="true">⌂</span>
+            <div>
+                <h3>No subjects yet</h3>
+                <p>Your study subjects will appear here once resources are added.</p>
+            </div>
+            <a class="text-link" href="{% url 'resource_create' %}">Add your first resource <span aria-hidden="true">→</span></a>
+        </div>
+    {% endif %}
+</section>
+
+<section class="content-section recent-section">
+    <div class="section-heading">
+        <div>
+            <p class="eyebrow">A good place to pick up</p>
+            <h2>Recent resources</h2>
+        </div>
+        <a class="text-link" href="{% url 'resource_list' %}">View all resources <span aria-hidden="true">→</span></a>
+    </div>
+    {% if latest_resources %}
+        <div class="recent-list">
+            {% for resource in latest_resources %}
+                <article class="recent-item">
+                    <div class="recent-symbol" aria-hidden="true">▤</div>
+                    <div class="recent-main">
+                        <div class="resource-tags">
+                            <span class="badge type-badge">{{ resource.resource_type }}</span>
+                            <span class="badge status-badge status-{{ resource.status|lower }}">{{ resource.status }}</span>
+                        </div>
+                        <h3><a href="{% url 'resource_detail' resource.pk %}">{{ resource.title }}</a></h3>
+                        <p class="recent-description">{{ resource.description|truncatechars:110 }}</p>
+                        <div class="recent-meta">
+                            <span>{{ resource.subject }}</span>
+                            <span>Added by {{ resource.author_uploader }}</span>
+                            <time datetime="{{ resource.date_added|date:'Y-m-d' }}">{{ resource.date_added|date:"M j, Y" }}</time>
+                        </div>
+                    </div>
+                    <a class="icon-link" href="{% url 'resource_detail' resource.pk %}" aria-label="View {{ resource.title }}">→</a>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <span class="empty-icon" aria-hidden="true">▤</span>
+            <h3>No study resources yet</h3>
+            <p>Start building your digital study library by adding your first resource.</p>
+            <a class="button primary" href="{% url 'resource_create' %}"><span aria-hidden="true">+</span> Add Resource</a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

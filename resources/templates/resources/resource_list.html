@@ -1,0 +1,115 @@
+{% extends 'resources/base.html' %}
+
+{% block title %}Study Resources | STUDYHUB{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Your personal learning library</p>
+        <h1>Study Resources</h1>
+        <p class="page-intro">Organize and manage your learning materials in one place.</p>
+    </div>
+    <a class="button primary" href="{% url 'resource_create' %}"><span aria-hidden="true">+</span> Add Resource</a>
+</section>
+
+<form method="get" class="filter-panel" role="search" aria-label="Filter study resources">
+    <div class="filter-heading">
+        <div>
+            <span class="filter-icon" aria-hidden="true">⌕</span>
+            <strong>Find a resource</strong>
+        </div>
+        {% if search or subject or resource_type or reviewer or status %}
+            <a class="text-link" href="{% url 'resource_list' %}">Clear filters</a>
+        {% endif %}
+    </div>
+    <div class="filter-grid">
+        <label class="filter-field search-field">
+            <span>Search</span>
+            <input type="search" name="search" value="{{ search }}" placeholder="Title, subject, description..." aria-label="Search resources">
+        </label>
+        <label class="filter-field">
+            <span>Subject</span>
+            <input type="text" name="subject" value="{{ subject }}" placeholder="Any subject">
+        </label>
+        <label class="filter-field">
+            <span>Resource type</span>
+            <select name="resource_type">
+                <option value="">All types</option>
+                {% for value, label in resource_type_choices %}
+                    <option value="{{ value }}"{% if resource_type == value %} selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label class="filter-field">
+            <span>Reviewer / uploader</span>
+            <select name="reviewer">
+                <option value="">Anyone</option>
+                {% for name in reviewers %}
+                    <option value="{{ name }}"{% if reviewer == name %} selected{% endif %}>{{ name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label class="filter-field">
+            <span>Status</span>
+            <select name="status">
+                <option value="">Any status</option>
+                {% for value, label in status_choices %}
+                    <option value="{{ value }}"{% if status == value %} selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <button type="submit" class="button primary filter-button">Apply filters</button>
+    </div>
+</form>
+
+<div class="results-heading">
+    <div>
+        <p class="eyebrow">The collection</p>
+        <h2>All resources</h2>
+    </div>
+    {% if object_list %}
+        <span class="results-count">{{ object_list|length }} shown</span>
+    {% endif %}
+</div>
+
+{% if object_list %}
+    <div class="resource-list">
+        {% for resource in object_list %}
+            <article class="resource-item">
+                <div class="resource-item-top">
+                    <div class="resource-tags">
+                        <span class="badge type-badge">{{ resource.resource_type }}</span>
+                        <span class="badge status-badge status-{{ resource.status|lower }}">{{ resource.status }}</span>
+                    </div>
+                    <time class="date-label" datetime="{{ resource.date_added|date:'Y-m-d' }}">Added {{ resource.date_added|date:"M j, Y" }}</time>
+                </div>
+                <div class="resource-item-content">
+                    <div class="resource-item-copy">
+                        <p class="resource-subject">{{ resource.subject }}</p>
+                        <h3><a href="{% url 'resource_detail' resource.pk %}">{{ resource.title }}</a></h3>
+                        <p class="resource-description">{{ resource.description|truncatechars:180 }}</p>
+                        <p class="resource-byline">Shared by <strong>{{ resource.author_uploader }}</strong></p>
+                    </div>
+                    <div class="resource-actions" aria-label="Actions for {{ resource.title }}">
+                        {% if resource.file %}
+                            <a class="button small secondary" href="{{ resource.file.url }}" target="_blank" rel="noopener noreferrer">Open file</a>
+                        {% elif resource.external_link %}
+                            <a class="button small secondary" href="{{ resource.external_link }}" target="_blank" rel="noopener noreferrer">Open link</a>
+                        {% endif %}
+                        <a class="button small secondary" href="{% url 'resource_detail' resource.pk %}">View</a>
+                        <a class="button small quiet-button" href="{% url 'resource_update' resource.pk %}">Edit</a>
+                        <a class="button small quiet-button" href="{% url 'resource_delete' resource.pk %}">Delete</a>
+                    </div>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <span class="empty-icon" aria-hidden="true">▤</span>
+        <h3>No study resources found.</h3>
+        <p>Your resource library is currently empty. Start building your study collection.</p>
+        <a class="button primary" href="{% url 'resource_create' %}"><span aria-hidden="true">+</span> Add Resource</a>
+    </div>
+{% endif %}
+{% endblock %}

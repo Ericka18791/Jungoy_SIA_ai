@@ -1,0 +1,17 @@
+{% extends 'resources/base.html' %}
+
+{% block title %}Delete {{ resource.title }} | STUDYHUB{% endblock %}
+
+{% block content %}
+<section class="confirmation-panel">
+    <span class="confirmation-icon" aria-hidden="true">!</span>
+    <p class="eyebrow">Please confirm</p>
+    <h1>Remove this resource?</h1>
+    <p class="confirmation-copy"><strong>{{ resource.title }}</strong> will be removed from your study library. This action cannot be undone.</p>
+    <form method="post" class="confirmation-actions">
+        {% csrf_token %}
+        <button type="submit" class="button danger">Delete Resource</button>
+        <a class="button secondary" href="{% url 'resource_detail' resource.pk %}">Keep Resource</a>
+    </form>
+</section>
+{% endblock %}

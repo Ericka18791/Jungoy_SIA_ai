@@ -1,0 +1,40 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#6b4226">
+    <title>{% block title %}STUDYHUB | Cute Cozy Digital Study Planner{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header">
+        <div class="container nav">
+            <a class="brand" href="{% url 'home' %}" aria-label="STUDYHUB home">
+                <span class="brand-mark" aria-hidden="true">S</span>
+                <span class="brand-name">STUDYHUB</span>
+            </a>
+            <nav class="primary-nav" aria-label="Main navigation">
+                <a href="{% url 'home' %}"{% if request.resolver_match.url_name == 'home' %} aria-current="page"{% endif %}>Home</a>
+                <a href="{% url 'resource_list' %}"{% if request.resolver_match.url_name == 'resource_list' or request.resolver_match.url_name == 'resource_detail' or request.resolver_match.url_name == 'resource_update' or request.resolver_match.url_name == 'resource_delete' or request.resolver_match.url_name == 'subject_detail' %} aria-current="page"{% endif %}>Resources</a>
+                <a class="nav-cta" href="{% url 'resource_create' %}"{% if request.resolver_match.url_name == 'resource_create' %} aria-current="page"{% endif %}>
+                    <span aria-hidden="true">+</span> Add Resource
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container page-content" id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <span class="footer-brand">STUDYHUB</span>
+            <span>Cute Cozy Digital Study Planner</span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{% extends 'resources/base.html' %}
+
+{% block title %}{{ subject_name }} | STUDYHUB{% endblock %}
+
+{% block content %}
+<p class="breadcrumb"><a href="{% url 'resource_list' %}">Study Resources</a><span aria-hidden="true">/</span>{{ subject_name }}</p>
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">A shelf in your study library</p>
+        <h1>{{ subject_name }}</h1>
+        <p class="page-intro">Resources collected for this subject.</p>
+    </div>
+    <a class="button primary" href="{% url 'resource_create' %}"><span aria-hidden="true">+</span> Add Resource</a>
+</section>
+
+{% if object_list %}
+    <div class="resource-list">
+        {% for resource in object_list %}
+            <article class="resource-item">
+                <div class="resource-item-top">
+                    <div class="resource-tags">
+                        <span class="badge type-badge">{{ resource.resource_type }}</span>
+                        <span class="badge status-badge status-{{ resource.status|lower }}">{{ resource.status }}</span>
+                    </div>
+                    <time class="date-label" datetime="{{ resource.date_added|date:'Y-m-d' }}">{{ resource.date_added|date:"M j, Y" }}</time>
+                </div>
+                <div class="resource-item-content">
+                    <div class="resource-item-copy">
+                        <h2><a href="{% url 'resource_detail' resource.pk %}">{{ resource.title }}</a></h2>
+                        <p class="resource-description">{{ resource.description|truncatechars:180 }}</p>
+                        <p class="resource-byline">Shared by <strong>{{ resource.author_uploader }}</strong></p>
+                    </div>
+                    <div class="resource-actions">
+                        <a class="button small secondary" href="{% url 'resource_detail' resource.pk %}">View</a>
+                        <a class="button small quiet-button" href="{% url 'resource_update' resource.pk %}">Edit</a>
+                    </div>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <span class="empty-icon" aria-hidden="true">⌂</span>
+        <h2>No resources for this subject yet</h2>
+        <p>Add a resource and it will be easy to find here next time.</p>
+        <a class="button primary" href="{% url 'resource_create' %}"><span aria-hidden="true">+</span> Add your first resource</a>
+    </div>
+{% endif %}
+{% endblock %}
